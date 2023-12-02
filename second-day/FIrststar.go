@@ -8,13 +8,17 @@ import (
 	"strings"
 )
 
-func helper(str *string) int {
+const (
+	red   = 12
+	green = 13
+	blue  = 14
+)
+
+func helper(str *string) bool {
 	tries := strings.Split(*str, ";")
 	//8 green, 6 blue, 20 red;
 	//5 blue, 4 red, 13 green;
 	//5 green, 1 red
-	red, blue, green := 0, 0, 0
-
 	for _, balls := range tries {
 		ball := strings.Split(balls, ",")
 		// 3 blue
@@ -22,26 +26,27 @@ func helper(str *string) int {
 			parts := strings.Fields(b)
 			number, err := strconv.Atoi(parts[0])
 			if err != nil {
-				return 0
+				return false
 			}
 			switch parts[1] {
 			case "red":
 				if number > red {
-					red = number
+					return false
 				}
 			case "green":
 				if number > green {
-					green = number
+					return false
 				}
 			case "blue":
 				if number > blue {
-					blue = number
+					return false
 				}
 
 			}
 		}
 	}
-	return red * blue * green
+
+	return true
 }
 
 func getGameID(str *string) int {
@@ -68,9 +73,11 @@ func solve() {
 			break
 		}
 		game := strings.Split(input, ":")
-		//gameID := getGameID(&game[0])
+		gameID := getGameID(&game[0])
 
-		ans += helper(&game[1])
+		if helper(&game[1]) {
+			ans += gameID
+		}
 
 	}
 
